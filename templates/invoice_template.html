@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Invoice - Order #{{ order.order_id }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 30px;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .watermark {
+            position: absolute;
+            top: 35%;
+            left: 10%;
+            opacity: 0.08;
+            font-size: 100px;
+            transform: rotate(-30deg);
+            z-index: 0;
+            pointer-events: none;
+            color: #3a7bd5;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 2px solid #3a7bd5;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            max-height: 80px;
+            margin-bottom: 10px;
+        }
+
+        .invoice-title {
+            text-align: right;
+        }
+
+        .invoice-title h2 {
+            margin: 0;
+            color: #3a7bd5;
+        }
+
+        .customer-info {
+            background: #f5f5f5;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 25px;
+        }
+
+        .customer-info h3 {
+            margin-top: 0;
+            color: #3a7bd5;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+        }
+
+        th {
+            background-color: #3a7bd5;
+            color: white;
+            padding: 10px;
+            text-align: left;
+        }
+
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .total-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .total-table td {
+            padding: 8px;
+        }
+
+        .total-table tr:last-child td {
+            font-weight: bold;
+            font-size: 1.1em;
+            border-top: 2px solid #3a7bd5;
+            padding-top: 10px;
+        }
+
+        .cod-section {
+            background-color: #e8f5e9;
+            border-left: 5px solid #28a745;
+            padding: 15px;
+            font-weight: bold;
+            color: #2e7d32;
+            margin-top: 25px;
+        }
+
+        .thank-you {
+            text-align: center;
+            margin-top: 40px;
+            font-style: italic;
+            color: #3a7bd5;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #777;
+            margin-top: 40px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="watermark">Divine Access</div>
+
+    <div class="header">
+        <div>
+            {% if logo_base64 %}
+                <img src="data:image/png;base64,{{ logo_base64 }}" alt="Company Logo" class="logo">
+            {% endif %}
+            <p><strong>Divine Access</strong><br>
+            Infocity Square, Patia<br>
+            Bhubaneswar, Odisha - 751024<br>
+            India</p>
+        </div>
+        <div class="invoice-title">
+            <h2>INVOICE</h2>
+            <p><strong>Order #:</strong> {{ order.order_id }}</p>
+            <p><strong>Date:</strong> {{ order.date }}</p>
+        </div>
+    </div>
+
+    <div class="customer-info">
+        <h3>Customer Details</h3>
+        <p><strong>Name:</strong> {{ order.customer_name }}</p>
+        <p><strong>Email:</strong> {{ order.customer_email }}</p>
+        <p><strong>Mobile:</strong> {{ order.customer_mobile }}</p>
+        <p><strong>Address:</strong><br>
+            {{ order.address }}<br>
+            {{ order.city }} - {{ order.pincode }}
+        </p>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Unit Price (₹)</th>
+                <th>Total (₹)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ order.product_name }}</td>
+                <td>{{ order.quantity }}</td>
+                <td>₹{{ "%.2f"|format(order.product_price) }}</td>
+                <td>₹{{ "%.2f"|format(order.total_price) }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table class="total-table">
+        <tr>
+            <td style="text-align: right;"><strong>Grand Total:</strong></td>
+            <td style="text-align: right;">₹{{ "%.2f"|format(order.total_price) }}</td>
+        </tr>
+    </table>
+
+    <div class="cod-section">
+        Payment Method: Cash on Delivery<br>
+        Please keep the exact amount ready. Payment will be collected upon delivery.
+    </div>
+
+    <div class="thank-you">
+        <p>Thank you for shopping with us! We appreciate your trust in Divine Access.</p>
+    </div>
+
+    <div class="footer">
+        <p>Divine Access | ankitnayak7895@gmail.com | +91 78150 47848</p>
+        <p>GSTIN: 22AAAAA0000A1Z5 | PAN: AAAAA1234A</p>
+        <p>Invoice generated on {{ current_time }}</p>
+    </div>
+</body>
+</html>

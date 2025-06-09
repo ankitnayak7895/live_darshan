@@ -1,0 +1,141 @@
+/* Ultra thin navbar */
+.navbar {
+    height: 35px;
+    padding: 0;
+    font-size: 12px;
+    line-height: 35px;
+    background-color: #000;
+    transition: background-color 0.3s ease; /* Smooth background transition */
+}
+
+.navbar-brand {
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    transition: transform 0.3s ease-in-out;
+}
+
+.navbar .nav-link {
+    font-size: 12px;
+    font-weight: 500;
+    color: #ffffff;
+    padding: 0 4px;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.navbar .nav-link:hover {
+    color: #ffc107 !important;
+    transform: scale(1.1); /* Slightly enlarge on hover */
+}
+
+/* Page background and fonts */
+body {
+    background-color: #fff8f0;
+    font-family: 'Poppins', sans-serif;
+    transition: background-color 0.3s ease;
+}
+
+/* Hero Section */
+section#hero {
+    animation: fadeIn 1s ease-out; /* Smooth fade-in animation for welcome text */
+}
+
+/* Fade-in Animation */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Cards */
+.card {
+    border: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card:hover {
+    transform: scale(1.05); /* 3D lift effect */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Bigger shadow on hover */
+}
+
+/* Buttons */
+.btn {
+    border-radius: 30px;
+    padding: 0.5rem 1rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+    background-color: #3498db;
+    color: white;
+    border: none;
+}
+
+.btn:hover {
+    transform: scale(1.1); /* Slight grow on hover */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    background-color: #2980b9; /* Darken button on hover */
+}
+
+/* Footer - Social Icons */
+footer i {
+    transition: transform 0.3s ease, color 0.3s ease;
+    color: #ffffff;
+}
+
+footer i:hover {
+    transform: scale(1.2); /* Scale the icons on hover */
+    color: #ffc107; /* Glow effect on hover */
+}
+
+/* Spacing between sections */
+section {
+    padding: 60px 0;
+    transition: padding 0.3s ease;
+}
+
+/* Hero Section - Optional additional animation */
+section#hero {
+    animation: fadeIn 1.2s ease-out;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .navbar .nav-link {
+        font-size: 10px;
+        padding: 0 3px;
+    }
+
+    .card {
+        margin-bottom: 15px;
+    }
+
+    .btn {
+        padding: 0.5rem 1rem;
+    }
+}
+
+/* === Logout page styles === */
+.logout-container {
+max-width: 400px;
+margin: 2rem auto;
+padding: 2rem;
+text-align: center;
+background: white;
+border-radius: 7px;
+box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.logout-message {
+margin-bottom: 2rem;
+}

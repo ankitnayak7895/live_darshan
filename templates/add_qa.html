@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Q&A</title>
+</head>
+<body>
+    <h1>Add a New Q&A</h1>
+    <form id="qa-form">
+        <label for="question">Question:</label><br>
+        <input type="text" id="question" name="question" required><br><br>
+        <label for="answer">Answer:</label><br>
+        <textarea id="answer" name="answer" required></textarea><br><br>
+        <label for="category">Category:</label><br>
+        <input type="text" id="category" name="category"><br><br>
+        <button type="submit">Add Q&A</button>
+    </form>
+
+    <script>
+        document.getElementById('qa-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const data = {
+                question: document.getElementById('question').value,
+                answer: document.getElementById('answer').value,
+                category: document.getElementById('category').value
+            };
+
+            fetch('/admin/add_chatbot_knowledge', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    alert('Q&A added successfully!');
+                    document.getElementById('qa-form').reset();
+                } else {
+                    alert('Error: ' + result.error);
+                }
+            })
+            .catch(error => {
+                alert('Error: ' + error);
+            });
+        });
+    </script>
+</body>
+</html>

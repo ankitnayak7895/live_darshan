@@ -1,0 +1,73 @@
+<nav class="navbar navbar-dark bg-dark shadow-sm">
+  <div class="container d-flex justify-content-between align-items-center w-100 flex-wrap">
+    
+    <!-- Brand -->
+    <a class="navbar-brand fw-bold" href="{{ url_for('home') }}">MySite</a>
+
+    <!-- Navigation Links -->
+    <ul class="navbar-nav flex-row gap-3">
+      <li class="nav-item">
+        <a class="nav-link text-white {% if request.path == url_for('home') %}active{% endif %}" href="{{ url_for('home') }}">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-white {% if request.path == url_for('fashion') %}active{% endif %}" href="{{ url_for('fashion') }}">Fashion</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-white {% if request.path == url_for('ecommerce') %}active{% endif %}" href="{{ url_for('ecommerce') }}">Shop</a>
+      </li>
+      <!-- View Orders Button: Hidden by default -->
+      <li class="nav-item d-none" id="nav-view-orders">
+        <a class="nav-link text-white {% if request.path == url_for('view_user_orders') %}active{% endif %}" href="{{ url_for('view_user_orders') }}">View Orders</a>
+      </li>
+    </ul>
+
+    <!-- Auth Links -->
+    <ul class="navbar-nav flex-row gap-3 align-items-center" id="navbar-auth">
+      <li class="nav-item d-none" id="nav-user-welcome">
+        <span class="nav-link text-success">Welcome, <span id="nav-username"></span></span>
+      </li>
+      <li class="nav-item d-none" id="nav-logout">
+        <a class="nav-link text-white" href="{{ url_for('logout') }}">Logout</a>
+      </li>
+      <li class="nav-item" id="nav-login">
+        <a class="nav-link text-white" href="{{ url_for('login') }}">Login</a>
+      </li>
+      <li class="nav-item" id="nav-register">
+        <a class="nav-link text-white" href="{{ url_for('register') }}">Register</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    fetch('/check-login-status')
+      .then(res => res.json())
+      .then(data => {
+        const navLogin = document.getElementById('nav-login');
+        const navRegister = document.getElementById('nav-register');
+        const navLogout = document.getElementById('nav-logout');
+        const navWelcome = document.getElementById('nav-user-welcome');
+        const navUsername = document.getElementById('nav-username');
+        const navViewOrders = document.getElementById('nav-view-orders');
+
+        if (data.is_logged_in) {
+          navLogin.classList.add('d-none');
+          navRegister.classList.add('d-none');
+          navLogout.classList.remove('d-none');
+          navWelcome.classList.remove('d-none');
+          navUsername.textContent = data.username || 'User';
+          navViewOrders.classList.remove('d-none'); // ✅ Show View Orders
+        } else {
+          navLogin.classList.remove('d-none');
+          navRegister.classList.remove('d-none');
+          navLogout.classList.add('d-none');
+          navWelcome.classList.add('d-none');
+          navViewOrders.classList.add('d-none'); // ❌ Hide View Orders
+        }
+      })
+      .catch(err => {
+        console.error('Login status check failed:', err);
+      });
+  });
+</script>

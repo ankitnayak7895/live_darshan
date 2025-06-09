@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Announcements - Live Darshan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-black text-white">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <h1 class="text-xl font-bold">Live Darshan</h1>
+                <nav>
+                    <a href="/" class="px-3 hover:underline">Home</a>
+                    <a href="/inbox" class="px-3 hover:underline font-medium">Announcements</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <h2 class="text-2xl font-bold mb-6 text-gray-800">Official Announcements</h2>
+        
+        {% if messages %}
+            <div class="space-y-4">
+                {% for msg in messages %}
+                <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="font-semibold text-gray-700">{{ msg.section }}</span>
+                        <span class="bg-blue-500 text-white text-xs px-2 py-1 rounded-full">Admin</span>
+                    </div>
+                    <p class="text-gray-700 mb-2">{{ msg.message }}</p>
+                    <p class="text-xs text-gray-400">
+                        {{ msg.created_at.strftime('%d %b %Y, %I:%M %p') }}
+                    </p>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-12 text-gray-400 italic">
+                No announcements yet. Please check back later.
+            </div>
+        {% endif %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black text-white py-6 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; 2025 Live Darshan. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

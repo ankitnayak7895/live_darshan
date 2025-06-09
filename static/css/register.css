@@ -1,0 +1,123 @@
+/* Styles for your register page */
+body {
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 90vh;
+    }
+    
+    .register-wrapper {
+      display: flex;
+      width: 100%;
+      max-width: 750px; /* Adjust max-width as needed */
+      border-radius: 10px; /* Add border-radius to the wrapper */
+      overflow: hidden; /* Clip the rounded corners of children */
+    }
+    
+    .register-left {
+      width: 50%;
+    }
+    
+    .register-left img {
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+    }
+    
+    .register-right {
+      width: 50%;
+      padding: 2rem; /* Add padding to the right side */
+      display: flex;
+      flex-direction: column;
+      justify-content: center; /* Center form content vertically */
+    }
+    
+    h2 {
+      font-size: 2rem;
+      font-weight: 600; /* Make "Live Darshan" bolder */
+      color: #1e293b; /* Darker text color */
+      margin-bottom: 0.5rem; /* Reduce bottom margin */
+      text-align: left; /* Align heading to the left */
+    }
+    
+    p {
+      color: #4b5563; /* Slightly darker gray */
+      margin-bottom: 1.5rem;
+      text-align: left;
+    }
+    
+    .input-description {
+      font-size: 0.75rem; /* Slightly larger than before */
+      color: #6b7280;
+      margin-top: 0.25rem;
+      line-height: 1.4;
+      text-align: left; /* Align description to the left */
+    }
+    
+    .input-error {
+      text-align: left; /* Align error message to the left */
+    }
+    
+    label {
+      text-align: left !important; /* Ensure label is left-aligned */
+      color: #374151; /* Darker label text */
+      font-weight: 500; /* Make labels bolder */
+      margin-bottom: 0.25rem;
+      display: block; /* Ensure label takes full width */
+    }
+    
+    input {
+      width: 90%;
+      padding: 0.75rem; /* Adjust padding */
+      margin-bottom: 0.75rem; /* Adjust margin */
+      border: 1px solid #d1d5db; /* Light gray border */
+      border-radius: 0.375rem; /* Tailwind's default rounded */
+      box-sizing: border-box; /* Ensure padding doesn't increase width */
+    }
+    
+    .relative > div:first-child { /* Style the +91 span */
+      background-color: #f3f4f6; /* Light background for +91 */
+      color: #4b5563;
+      border-right: 1px solid #d1d5db;
+    }
+    
+    button {
+      background-color: #000;
+      color: white;
+      font-weight: 600; /* Make button text bolder */
+      padding: 0.875rem 2rem; /* Adjust button padding */
+      border-radius: 0.375rem; /* Tailwind's default rounded */
+      transition: background-color 0.2s ease-in-out;
+    }
+    
+    button:hover {
+      background-color: #111827; /* Darker black on hover */
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 750px) {
+      .register-wrapper {
+        flex-direction: column;
+      }
+    
+      .register-left,
+      .register-right {
+        width: 90%;
+        padding-left: 0;
+      }
+    
+      .register-right {
+        padding: 2rem; /* Add padding to the right side in mobile view */
+      }
+    
+      .register-left img {
+        width: 90%;
+        height: auto;
+        border-radius: 10px 10px 0 0; /* Round top corners in mobile view */
+      }
+    }

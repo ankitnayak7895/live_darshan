@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Darshan Live Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .error-message {
+      transition: opacity 0.3s ease-in-out;
+    }
+    .error-message:not(.visible) {
+      opacity: 0;
+      height: 0;
+      overflow: hidden;
+    }
+    .error-message.visible {
+      opacity: 1;
+      height: auto;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center">
+  <div class="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
+    <div class="flex justify-between items-center mb-4">
+      <h1 class="text-xl font-bold text-black">Darshan Live</h1>
+      <div class="text-sm text-black">
+        <a href="#" class="font-semibold hover:underline">Create an account</a>
+      </div>
+    </div>
+    <h2 class="text-2xl font-bold text-gray-800 mb-2">Welcome back!</h2>
+    <p class="text-sm text-gray-500 mb-6">Enter your credentials to access your account</p>
+
+    <div class="flex flex-col gap-3 mb-6">
+      <button class="flex items-center justify-center gap-2 px-4 py-2 border rounded-md text-gray-700 bg-white hover:bg-gray-100 transition">
+        <img src="https://www.svgrepo.com/show/476067/google-logo.svg" alt="Google Logo" class="w-5 h-5">
+        Log in with Google
+      </button>
+      <button class="flex items-center justify-center gap-2 px-4 py-2 border rounded-md text-white bg-gray-900 hover:bg-black transition">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/GitHub-Mark-White.svg" alt="GitHub Logo" class="w-5 h-5">
+        Log in with GitHub
+      </button>
+    </div>
+
+    <div class="flex items-center gap-3 mb-6">
+      <div class="flex-1 h-px bg-gray-300"></div>
+      <span class="text-sm text-gray-500">Or</span>
+      <div class="flex-1 h-px bg-gray-300"></div>
+    </div>
+
+    <!-- Traditional form submission (POST) -->
+    <form id="loginForm" method="POST" action="/admin/login" class="space-y-4">
+      <div>
+        <label for="username" class="block text-sm font-medium text-gray-700">Email or username</label>
+        <input type="text" id="username" name="username" class="w-full mt-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Enter your email or username" required aria-required="true" />
+        <div id="username-error" class="error-message text-red-600 text-sm mt-1"></div>
+      </div>
+
+      <div>
+        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+        <input type="password" id="password" name="password" class="w-full mt-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Enter your password" required aria-required="true" />
+        <div id="password-error" class="error-message text-red-600 text-sm mt-1"></div>
+      </div>
+
+      <button type="submit" id="submitBtn" class="w-full py-2 px-4 bg-black text-white font-semibold rounded-md hover:bg-gray-800 transition">Sign in</button>
+      <div id="login-error" class="error-message text-center text-red-600 text-sm mt-2"></div>
+    </form>
+
+    <a href="#" class="block text-center text-sm text-black mt-4 hover:underline">Forgot your password?</a>
+  </div>
+
+</body>
+</html>

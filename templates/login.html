@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live Darshan Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body class="bg-gray-100">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="absolute top-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-md">
+        {% for category, message in messages %}
+          <div class="mb-4 px-4 py-3 rounded shadow-lg text-white text-sm font-medium 
+                      {% if category == 'success' %}bg-green-500
+                      {% elif category == 'danger' %}bg-red-500
+                      {% else %}bg-blue-500{% endif %}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <div class="container mx-auto flex flex-col md:flex-row items-center justify-center min-h-screen px-4 py-8 bg-white rounded-lg shadow-md">
+    <!-- Image Section -->
+    <div class="w-full md:w-1/2 flex justify-center mb-6 md:mb-0">
+      <img
+        src="{{ url_for('static', filename='images/mandir.jpg') }}"
+        alt="Temple view"
+        class="rounded-md w-full max-w-md max-h-96 object-contain"
+      />
+    </div>
+
+    <!-- Form Section -->
+    <div class="w-full md:w-1/2 max-w-md md:pl-8">
+      <h2 class="text-2xl font-semibold text-black mb-6">Login</h2>
+      <form id="loginForm" method="POST" action="{{ url_for('login') }}" class="space-y-4">
+
+        <!-- Email / Username -->
+        <div>
+          <label for="emailUsername" class="block text-gray-700 text-sm font-semibold mb-1">E-mail/Username</label>
+          <input
+            type="text"
+            id="emailUsername"
+            name="username"
+            placeholder="Enter your e-mail or username"
+            class="transition-all duration-200 shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            required
+          />
+          <div id="emailUsername-error" class="text-red-500 text-sm mt-1 hidden">Please enter your e-mail or username</div>
+          <p class="text-xs text-gray-500 mt-1">Please provide your registered e-mail or username for access.</p>
+        </div>
+
+        <!-- Password -->
+        <div>
+          <label for="password" class="block text-gray-700 text-sm font-semibold mb-1">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Enter your password"
+            class="transition-all duration-200 shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            required
+          />
+          <div id="password-error" class="text-red-500 text-sm mt-1 hidden">Please enter your password</div>
+          <p class="text-xs text-gray-500 mt-1">Provide your password here.</p>
+        </div>
+
+        <!-- Remember Me Checkbox -->
+        <div class="flex items-center">
+          <input
+            type="checkbox"
+            id="rememberMe"
+            name="remember"
+            class="h-4 w-4 text-black focus:ring-black border-gray-300 rounded"
+          />
+          <label for="rememberMe" class="ml-2 block text-gray-700 text-sm font-semibold select-none">
+            Remember Me
+          </label>
+        </div>
+
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          class="bg-black text-white font-bold py-2 px-6 rounded-full focus:outline-none focus:shadow-outline w-full hover:bg-gray-800 transition duration-300"
+        >
+          Login
+        </button>
+      </form>
+
+      
+  <!-- Form Validation Script -->
+  <script>
+    setTimeout(() => {
+      const flashMessages = document.querySelectorAll('.z-50 > div');
+      flashMessages.forEach(msg => {
+        msg.style.transition = "opacity 0.5s ease";
+        msg.style.opacity = 0;
+        setTimeout(() => msg.remove(), 500);
+      });
+    }, 3000);
+
+    const form = document.getElementById('loginForm');
+    const emailUsernameInput = document.getElementById('emailUsername');
+    const passwordInput = document.getElementById('password');
+
+    const emailUsernameError = document.getElementById('emailUsername-error');
+    const passwordError = document.getElementById('password-error');
+
+    function showError(inputElement, errorElement, message) {
+      inputElement.classList.add('border-red-500');
+      errorElement.textContent = message;
+      errorElement.classList.remove('hidden');
+    }
+
+    function hideError(inputElement, errorElement) {
+      inputElement.classList.remove('border-red-500');
+      errorElement.classList.add('hidden');
+    }
+
+    function validateForm() {
+      let isValid = true;
+
+      if (!emailUsernameInput.value.trim()) {
+        showError(emailUsernameInput, emailUsernameError, 'Please enter your e-mail or username');
+        isValid = false;
+      } else {
+        hideError(emailUsernameInput, emailUsernameError);
+      }
+
+      if (!passwordInput.value.trim()) {
+        showError(passwordInput, passwordError, 'Please enter your password');
+        isValid = false;
+      } else {
+        hideError(passwordInput, passwordError);
+      }
+
+      return isValid;
+    }
+
+    form.addEventListener('submit', (event) => {
+      if (!validateForm()) {
+        event.preventDefault();
+      }
+    });
+  </script>
+</body>
+</html>

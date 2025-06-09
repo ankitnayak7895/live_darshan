@@ -1,0 +1,13 @@
+prefix=/home/ankit/web_portal/web_project
+exec_prefix=/home/ankit/web_portal/web_project
+libdir=/home/ankit/web_portal/web_project/lib
+sharedlibdir=/home/ankit/web_portal/web_project/lib
+includedir=/home/ankit/web_portal/web_project/include
+
+Name: zlib
+Description: zlib compression library
+Version: 1.2.13
+
+Requires:
+Libs: -L${libdir} -L${sharedlibdir} -lz
+Cflags: -I${includedir}

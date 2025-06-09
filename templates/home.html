@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Live Darshan Portal</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  
+  <!-- Font Awesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  
+  <meta name="description" content="Experience spiritual darshan and connect with divine blessings online through live videos, images, and music." />
+  <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}" />
+
+  <style>
+    body {
+      font-size: 0.7rem;
+      padding-top: 30px;
+    }
+
+    #hero {
+      background: url('/static/images/hero-image.jpg') no-repeat center center;
+      background-size: cover;
+      color: white;
+      padding: 70px 0;
+      position: relative;
+    }
+
+    #hero::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+    }
+
+    #hero-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-hover-effect:hover {
+      transform: translateY(-5px);
+      transition: transform 0.3s ease;
+      box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+    }
+
+    .video-container {
+      position: relative;
+      padding-bottom: 56.25%; /* 15:8 aspect ratio */
+      height: 0;
+      overflow: hidden;
+    }
+
+    .video-container iframe {
+      position: absolute;
+      top: 0; left: 0;
+      width: 90%; height: 90%;
+    }
+
+    .navbar {
+      height: 40px;
+    }
+
+    /* Chatbot Styles */
+    #chatbot-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #007bff;
+      color: white;
+      padding: 12px 16px;
+      border-radius: 50%;
+      font-size: 1.5rem;
+      cursor: pointer;
+      z-index: 999;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    #chatbot-box {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      width: 300px;
+      max-height: 400px;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      display: none;
+      flex-direction: column;
+      z-index: 1000;
+      border: 1px solid #ccc;
+    }
+
+    #chatbot-header {
+      background: #007bff;
+      color: white;
+      padding: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    #chatbot-messages {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+      max-height: 250px;
+      font-size: 0.85rem;
+    }
+
+    #chatbot-input-area {
+      display: flex;
+      border-top: 1px solid #eee;
+    }
+
+    #chatbot-input-area input {
+      flex: 1;
+      border: none;
+      padding: 10px;
+      font-size: 0.85rem;
+    }
+
+    #chatbot-input-area button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+<!-- Chatbot Toggle Button -->
+<div id="chatbot-toggle" onclick="toggleChat()" style="position: fixed; bottom: 20px; right: 20px; cursor: pointer; background: #007bff; color: white; padding: 8px 12px; border-radius: 50%; font-size: 16px;">💬</div>
+
+<!-- Chatbot Box (Smaller, Initially Hidden) -->
+<div id="chatbot-box" style="display: none; position: fixed; bottom: 70px; right: 20px; width: 220px; height: 200px; background: white; border: 1px solid #ccc; border-radius: 8px; box-shadow: 0 0 8px rgba(0,0,0,0.15); display: flex; flex-direction: column; font-size: 11px;">
+  <div id="chatbot-header" style="background: #007bff; color: white; padding: 6px 10px; border-top-left-radius: 8px; border-top-right-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+    <strong style="font-size: 11px;">Ask</strong>
+    <span onclick="closeChat()" style="cursor: pointer;">✖</span>
+  </div>
+  <div id="chatbot-messages" style="flex: 1; padding: 8px; overflow-y: auto;"></div>
+  <div id="chatbot-input-area" style="padding: 6px 8px; border-top: 1px solid #ccc;">
+    <input type="text" id="chatbot-input" placeholder="Type..." style="width: 65%; font-size: 11px;" onkeydown="if(event.key==='Enter'){sendMessage();}">
+    <button onclick="sendMessage()" style="width: 30%; font-size: 11px;">Send</button>
+  </div>
+</div>
+
+
+
+
+
+<!-- Navbar -->
+<nav class="navbar navbar-dark bg-black fixed-top">
+  <div class="container-fluid d-flex align-items-center justify-content-between px-3">
+    <a class="navbar-brand d-flex align-items-center" href="{{ url_for('home') }}">
+      <i class="fas fa-circle text-danger me-2" style="font-size: 0.75rem;"></i>
+      Live Darshan
+    </a>
+    
+    <!-- Inside Navbar User Section -->
+    <div class="d-flex flex-row align-items-center gap-3">
+      {% if is_logged_in %}
+        <span class="text-success small">Welcome, {{ current_username }}!</span>
+        <a class="nav-link text-warning p-0" href="{{ url_for('logout') }}">Logout</a>
+      {% else %}
+        <a class="nav-link text-white p-0" href="{{ url_for('login') }}">User Login</a>
+      {% endif %}
+
+      <a class="nav-link text-white p-0" href="{{ url_for('admin_login') }}">Admin Login</a>
+      <a class="nav-link text-white p-0" href="{{ url_for('register') }}">Register</a>
+      <a class="nav-link text-white p-0" href="{{ url_for('contact_us') }}">Contact Us</a>
+      <a class="nav-link text-white p-0" href="{{ url_for('inbox') }}">Inbox</a>
+      <a class="nav-link text-white p-0" href="{{ url_for('ecommerce') }}">E-Commerce</a>
+    </div>
+  </div>
+</nav>
+
+<main class="pt-4">
+
+  <!-- Flash Messages -->
+  <div class="container mt-3">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+
+  <!-- Hero Section -->
+  <section id="hero">
+    <div id="hero-content" class="text-center py-4">
+      <h1 class="display-5 fw-bold">Welcome to Live Darshan Portal</h1>
+      <p class="lead">"Discover the World with Divine Blessings"</p>
+    </div>
+  </section>
+
+  <!-- Connection Section -->
+  <section id="connection" class="container text-center my-5">
+    <h2 class="mb-3">Feel the Spiritual Connection</h2>
+    <p class="text-muted">
+      Finding a moment of peace can be difficult. Live Darshan brings you closer to temples, festivals, and spirituality no matter where you are.
+    </p>
+  </section>
+
+  <!-- Dashboards Section -->
+  <section id="dashboards" class="container my-5">
+    <h2 class="text-center mb-4">Featured Dashboards</h2>
+    {% if dashboards %}
+      <div class="row g-4">
+        {% for dashboard in dashboards %}
+          <div class="col-md-6 col-lg-4">
+            <div class="card h-90 shadow-sm border-0 card-hover-effect">
+              <img 
+                src="{{ dashboard.image_url or url_for('static', filename='images/placeholder.png') }}" 
+                class="card-img-top" 
+                alt="{{ dashboard.title or 'Dashboard Image' }}"
+                onerror="this.src='{{ url_for('static', filename='images/placeholder.png') }}';"
+                loading="lazy"
+                style="height: 150px; object-fit: cover;"
+              >
+              <div class="card-body d-flex flex-column">
+                <h5 class="card-title">{{ dashboard.title }}</h5>
+                <p class="card-text text-muted">{{ dashboard.description }}</p>
+                <div class="mt-auto">
+                  {% if dashboard.link %}
+                    <a href="{{ dashboard.link }}" class="btn btn-primary w-100" target="_blank" rel="noopener noreferrer">View</a>
+                  {% else %}
+                    <button class="btn btn-secondary w-100" disabled>Coming Soon</button>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="alert alert-info text-center">
+        No dashboards available at the moment. Please check back later.
+      </div>
+    {% endif %}
+  </section>
+
+  <!-- Live Darshan YouTube Videos Section -->
+  <section id="live-videos" class="container my-5">
+    <h2 class="text-center mb-4">Live Darshan Videos</h2>
+    {% if videos %}
+      <div class="row g-4">
+        {% for video in videos %}
+          <div class="col-md-6 col-lg-4">
+            <div class="ratio ratio-16x9">
+              <iframe
+                src="https://www.youtube.com/embed/{{ video.link | youtube_embed }}"
+                title="{{ video.title or 'Live Darshan Video' }}"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+                loading="lazy"
+              ></iframe>
+            </div>
+            <div class="card-body text-center">
+              <h5 class="card-title">{{ video.title }}</h5>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="text-center">No videos available at the moment.</p>
+    {% endif %}
+  </section>
+
+  <!-- Featured Videos Section -->
+  <section id="featured-videos" class="container my-5">
+    <h2 class="text-center mb-4">Featured Spiritual Videos</h2>
+    {% if featured_videos %}
+      <div class="row g-4">
+        {% for video in featured_videos %}
+          <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm border-0 card-hover-effect">
+              <div class="video-container">
+                <iframe
+                  src="https://www.youtube.com/embed/{{ video.link }}"
+                  title="{{ video.title }}"
+                  frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen
+                  loading="lazy"
+                ></iframe>
+              </div>
+              <div class="card-body">
+                <h5 class="card-title">{{ video.title }}</h5>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="alert alert-info text-center">
+        No featured videos available. Explore our full collection below.
+      </div>
+    {% endif %}
+  </section>
+
+  <!-- Explore Section -->
+  <section id="explore" class="container text-center my-5 py-4 bg-light rounded">
+    <h2>Discover More Spiritual Content</h2>
+    <p class="text-muted mb-4">Immerse yourself in our complete collection of devotional content</p>
+    <div class="d-flex justify-content-center gap-3">
+      <a href="{{ url_for('music') }}" class="btn btn-outline-primary">
+        <i class="fas fa-music me-2"></i> Explore Music
+      </a>
+      <a href="{{ url_for('videos') }}" class="btn btn-outline-danger">
+        <i class="fas fa-video me-2"></i> Explore Videos
+      </a>
+    </div>
+  </section>
+
+  <!-- Images Section -->
+  <section id="images" class="container my-5">
+    <h2 class="text-center mb-4">Divine Images</h2>
+    {% if images %}
+      <div class="row g-4">
+        {% for image in images %}
+          <div class="col-md-6 col-lg-4">
+            <div class="card h-90 shadow-sm border-0 card-hover-effect">
+              <img 
+                src="{{ image.url }}" 
+                class="card-img-top" 
+                alt="{{ image.title or 'Spiritual Image' }}" 
+                loading="lazy"
+                style="height: 150px; object-fit: cover;"
+                onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/placeholder.png') }}';"
+              >
+              <div class="card-body">
+                <h5 class="card-title">{{ image.title }}</h5>
+                <p class="card-text text-muted">{{ image.description }}</p>
+                <a href="{{ image.url }}" class="btn btn-sm btn-outline-success" download>
+                  <i class="fas fa-download me-1"></i> Download
+                </a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="alert alert-info text-center">
+        No images available at the moment.
+      </div>
+    {% endif %}
+  </section>
+
+</main>
+
+<!-- Footer -->
+<footer class="bg-dark text-white py-4 mt-5">
+  <div class="container">
+    <div class="text-center mb-3">
+      <a href="#" class="text-white mx-2" aria-label="Facebook"><i class="fab fa-facebook fa-lg"></i></a>
+      <a href="#" class="text-white mx-2" aria-label="YouTube"><i class="fab fa-youtube fa-lg"></i></a>
+      <a href="#" class="text-white mx-2" aria-label="Instagram"><i class="fab fa-instagram fa-lg"></i></a>
+    </div>
+    <div class="d-flex justify-content-center gap-3 mb-3">
+      <a href="{{ url_for('feedback') }}" class="btn btn-sm btn-light">Feedback</a>
+      <a href="{{ url_for('about_us') }}" class="btn btn-sm btn-outline-light">About Us</a>
+    </div>
+    <p class="text-center mb-0 small">
+      © 2025 Live Darshan Portal | All Rights Reserved
+    </p>
+  </div>
+</footer>
+
+<script>
+function toggleChat() {
+  const box = document.getElementById("chatbot-box");
+  const toggleBtn = document.getElementById("chatbot-toggle");
+
+  if (box.style.display === "none" || box.style.display === "") {
+    box.style.display = "flex";
+    document.getElementById("chatbot-input").focus();
+  } else {
+    box.style.display = "none";
+  }
+}
+
+function closeChat() {
+  document.getElementById("chatbot-box").style.display = "none";
+}
+
+async function sendMessage() {
+  const input = document.getElementById("chatbot-input");
+  const message = input.value.trim();
+  if (!message) return;
+
+  const chatArea = document.getElementById("chatbot-messages");
+  chatArea.innerHTML += `<div><strong>You:</strong> ${message}</div>`;
+
+  input.value = "";
+
+  // Call your backend here
+  try {
+    const response = await fetch("/get", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message })
+    });
+
+    const data = await response.json();
+    chatArea.innerHTML += `<div><strong>Bot:</strong> ${data.response}</div>`;
+  } catch (error) {
+    chatArea.innerHTML += `<div><strong>Bot:</strong> Error getting response.</div>`;
+  }
+
+  chatArea.scrollTop = chatArea.scrollHeight;
+}
+</script>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html> 

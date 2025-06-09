@@ -1,0 +1,37 @@
+<!-- templates/dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 30px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+        h1 {
+            color: #333;
+        }
+        .welcome {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Dashboard</h1>
+        <div class="welcome">
+            <p>Welcome, <strong>{{ current_username or 'Guest' }}</strong>!</p>
+            {% if is_logged_in %}
+                <p>You are logged in. User ID: {{ current_user_id }}</p>
+            {% else %}
+                <p>You are not logged in.</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>E-Commerce</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    .navbar-nav {
+      flex-direction: row !important;
+      gap: 20px;
+    }
+    .nav-link {
+      white-space: nowrap;
+    }
+    .navbar-toggler-icon {
+      background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba%280, 0, 0, 0.5%29' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+    }
+    .card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border: none;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    }
+    .card-img-top {
+      height: 200px;
+      object-fit: cover;
+    }
+    .card-body {
+      padding: 1.25rem;
+    }
+    .card-footer {
+      background: transparent;
+      border-top: none;
+      padding: 0 1.25rem 1.25rem;
+    }
+    .btn-buy-now {
+      background-color: #28a745;
+      color: white;
+      font-weight: bold;
+      width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+      transition: all 0.3s ease;
+    }
+    .btn-buy-now:hover {
+      background-color: #218838;
+      transform: translateY(-2px);
+    }
+    .product-price {
+      font-size: 1.25rem;
+      font-weight: bold;
+      color: #2c3e50;
+      margin-bottom: 15px;
+    }
+    .page-header {
+      margin-bottom: 30px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #eee;
+    }
+    #user-status {
+      margin-bottom: 20px;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+    #user-status span.logged-in {
+      color: #28a745;
+    }
+    #user-status span.logged-out {
+      color: #dc3545;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Include Navbar -->
+  {% include 'navbar.html' %}
+
+  <div class="container my-4">
+
+    <!-- User Login Status Display -->
+    <div id="user-status" class="text-center text-muted">
+      Checking login status...
+    </div>
+
+    <div class="page-header text-center">
+      <h1 class="fw-bold">Our Products</h1>
+      <p class="text-muted">Fast delivery and easy returns</p>
+    </div>
+
+    <div class="row">
+      {% if products %}
+        {% for product in products %}
+          <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100">
+              <img src="{{ product.image_url or url_for('static', filename='images/placeholder.png') }}"
+                   class="card-img-top"
+                   alt="{{ product.name }}"
+                   onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/placeholder.png') }}';" />
+
+              <div class="card-body d-flex flex-column">
+                <h5 class="card-title">{{ product.name }}</h5>
+                <p class="card-text text-muted">{{ product.description }}</p>
+                <p class="product-price">₹ {{ product.price }}</p>
+              </div>
+
+              <div class="card-footer">
+                <a href="{{ url_for('buy_now', product_id=product.id) }}"
+                   class="btn btn-buy-now buy-now-btn"
+                   data-product-id="{{ product.id }}">
+                  Buy Now
+                </a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="col-12">
+          <div class="alert alert-info text-center">
+            No products available at the moment. Please check back later.
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const userStatusEl = document.getElementById('user-status');
+      const buyNowButtons = document.querySelectorAll('.buy-now-btn');
+
+      // Update user status UI
+      function updateUserStatus(isLoggedIn, username) {
+        if (isLoggedIn) {
+          userStatusEl.innerHTML = `Logged in as <span class="logged-in">${username}</span>`;
+        } else {
+          userStatusEl.innerHTML = `<span class="logged-out">You are not logged in</span>. <a href="/login" class="text-decoration-none">Login</a>`;
+        }
+      }
+
+      // Fetch login status
+      fetch('/check-login-status')
+        .then(res => res.json())
+        .then(data => {
+          updateUserStatus(data.is_logged_in, data.username || '');
+        })
+        .catch(() => {
+          updateUserStatus(false, '');
+        });
+
+      // Handle Buy Now with login check
+      buyNowButtons.forEach(button => {
+        button.addEventListener('click', function (e) {
+          e.preventDefault();
+          const productId = this.getAttribute('data-product-id');
+
+          fetch('/check-login-status')
+            .then(res => res.json())
+            .then(data => {
+              const nextUrl = `/buy-now/${productId}`;
+              if (data.is_logged_in) {
+                window.location.href = nextUrl;
+              } else {
+                sessionStorage.setItem('next_url', nextUrl);
+                window.location.href = `/login?next=${encodeURIComponent(nextUrl)}`;
+              }
+            })
+            .catch(() => {
+              window.location.href = `/login?next=/buy-now/${productId}`;
+            });
+        });
+      });
+    });
+  </script>
+</body>
+</html>

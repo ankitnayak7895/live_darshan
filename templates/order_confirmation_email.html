@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Your Order Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+            line-height: 1.6;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 25px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            border-radius: 5px;
+        }
+        h2 {
+            color: #3a7bd5;
+        }
+        .order-details {
+            background-color: #fafafa;
+            padding: 15px;
+            border: 1px solid #eee;
+            margin-top: 20px;
+            border-radius: 4px;
+        }
+        .order-details p {
+            margin: 6px 0;
+        }
+        .footer {
+            font-size: 13px;
+            color: #777;
+            margin-top: 30px;
+            text-align: center;
+        }
+        .divider {
+            border-top: 1px solid #ddd;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Thank you for your order, {{ user_fullname }}!</h2>
+        <p>We're excited to let you know that we've received your order. Here are the details:</p>
+
+        <div class="order-details">
+            <p><strong>Order ID:</strong> {{ order.order_id }}</p>
+            <p><strong>Product:</strong> {{ order.product_name }}</p>
+            <p><strong>Quantity:</strong> {{ order.quantity }}</p>
+            <p><strong>Total Price:</strong> ₹{{ "%.2f"|format(order.total_price) }}</p>
+            <p><strong>Shipping Address:</strong><br>
+                {{ order.address }}<br>
+                {{ order.city }} - {{ order.pincode }}
+            </p>
+        </div>
+
+        <div class="divider"></div>
+
+        <p>We will send you another email when your order ships.</p>
+        <p>If you have any questions, feel free to reply to this email or contact our support team.</p>
+
+        <div class="footer">
+            <p>Divine Access<br>
+            support@divineaccess.com | +91 7815047848</p>
+            <p>Infocity Square, Patia, Bhubaneswar, Odisha - 751024</p>
+        </div>
+    </div>
+</body>
+</html>

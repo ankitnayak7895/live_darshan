@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live Darshan Register</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}" />
+</head>
+<body class="bg-gray-100">
+  <div class="container flex justify-center items-center min-h-screen">
+    <div class="bg-white rounded-lg shadow-md p-8 register-wrapper">
+      <div class="flex">
+        <div class="w-1/2">
+          <img src="{{ url_for('static', filename='images/premmandir.jpg') }}" alt="Prem Mandir" class="w-full h-auto object-cover rounded-md" />
+        </div>
+
+        <div class="w-1/2 pl-10">
+          <h2 class="text-2xl font-bold text-black mb-4">Live Darshan</h2>
+          <p class="text-gray-700 mb-6 text-center">
+            <span class="font-semibold text-black">Hi!</span> Welcome to Live Darshan Portal dude <span class="wave-hand">👋</span>
+          </p>
+          <form class="w-full space-y-4" id="registerForm" method="POST" action="{{ url_for('register') }}">
+            <!-- Username -->
+            <div>
+              <label for="username" class="block text-gray-700 text-sm font-bold mb-2">Username</label>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                placeholder="Enter your username"
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                required
+                pattern="[a-zA-Z0-9]+"
+                title="Username must be alphanumeric"
+              />
+              <div id="username-error" class="input-error text-red-500 text-xs italic hidden">Please enter a valid username</div>
+            </div>
+
+            <!-- First Name -->
+            <div>
+              <label for="firstName" class="block text-gray-700 text-sm font-bold mb-2">First Name</label>
+              <input
+                type="text"
+                id="firstName"
+                name="firstName"
+                placeholder="Enter your first name"
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                required
+                maxlength="15"
+              />
+              <div id="firstName-error" class="input-error text-red-500 text-xs italic hidden">First name should not exceed 15 characters.</div>
+            </div>
+
+            <!-- Last Name -->
+            <div>
+              <label for="lastName" class="block text-gray-700 text-sm font-bold mb-2">Last Name</label>
+              <input
+                type="text"
+                id="lastName"
+                name="lastName"
+                placeholder="Enter your last name"
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                required
+                maxlength="15"
+              />
+              <div id="lastName-error" class="input-error text-red-500 text-xs italic hidden">Last name should not exceed 15 characters.</div>
+            </div>
+
+            <!-- Email -->
+            <div>
+              <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Enter your email"
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                required
+                pattern="^[\w\.-]+@[\w\.-]+\.\w+$"
+                title="Please enter a valid email address."
+              />
+              <div id="email-error" class="input-error text-red-500 text-xs italic hidden">Please enter a valid email address.</div>
+            </div>
+
+            <!-- Mobile Number -->
+            <div>
+              <label for="mobileNumber" class="block text-gray-700 text-sm font-bold mb-2">Mobile Number</label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <span class="text-gray-700 text-sm">+91 </span>
+                </div>
+                <input
+                  type="tel"
+                  id="mobileNumber"
+                  name="mobileNumber"
+                  placeholder="Enter your mobile number"
+                  class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pl-12"
+                  pattern="^[6-9]\d{9}$"
+                  required
+                />
+              </div>
+              <div id="mobileNumber-error" class="input-error text-red-500 text-xs italic hidden">Mobile number should be 10 digits and start with 6, 7, 8, or 9.</div>
+            </div>
+
+            <!-- Password -->
+            <div>
+              <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Enter your password"
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                required
+                pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,16}$"
+                title="Password must be between 8-16 characters, include uppercase, lowercase, digits, and special characters."
+              />
+              <div id="password-error" class="input-error text-red-500 text-xs italic hidden">Password must be between 8–16 characters with uppercase, lowercase, digits, and symbols.</div>
+            </div>
+
+            <!-- Submit Button -->
+            <button
+              type="submit"
+              class="bg-black hover:bg-gray-800 text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline w-full transition duration-300 ease-in-out"
+            >
+              Register
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('registerForm');
+
+    // Validate username
+    form.addEventListener('submit', function (event) {
+      let isValid = true;
+      const username = document.getElementById('username');
+      const usernameError = document.getElementById('username-error');
+      if (!/^[a-zA-Z0-9]+$/.test(username.value)) {
+        usernameError.classList.remove('hidden');
+        isValid = false;
+      } else {
+        usernameError.classList.add('hidden');
+      }
+
+      // Validate first name length
+      const firstName = document.getElementById('firstName');
+      const firstNameError = document.getElementById('firstName-error');
+      if (firstName.value.length > 15) {
+        firstNameError.classList.remove('hidden');
+        isValid = false;
+      } else {
+        firstNameError.classList.add('hidden');
+      }
+
+      // Validate last name length
+      const lastName = document.getElementById('lastName');
+      const lastNameError = document.getElementById('lastName-error');
+      if (lastName.value.length > 15) {
+        lastNameError.classList.remove('hidden');
+        isValid = false;
+      } else {
+        lastNameError.classList.add('hidden');
+      }
+
+      // Validate mobile number
+      const mobileNumber = document.getElementById('mobileNumber');
+      const mobileNumberError = document.getElementById('mobileNumber-error');
+      if (!/^[6-9]\d{9}$/.test(mobileNumber.value)) {
+        mobileNumberError.classList.remove('hidden');
+        isValid = false;
+      } else {
+        mobileNumberError.classList.add('hidden');
+      }
+
+      // Validate password
+      const password = document.getElementById('password');
+      const passwordError = document.getElementById('password-error');
+      if (!/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,16}$/.test(password.value)) {
+        passwordError.classList.remove('hidden');
+        isValid = false;
+      } else {
+        passwordError.classList.add('hidden');
+      }
+
+      // Prevent form submission if any validation fails
+      if (!isValid) {
+        event.preventDefault();
+      }
+    });
+  </script>
+</body>
+</html>

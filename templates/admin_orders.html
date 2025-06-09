@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Orders - Divine Access</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/phosphor-icons/1.4.2/css/phosphor.min.css" />
+  <style>
+    body { font-family: "Inter", sans-serif; background-color: #f3f4f6; }
+    .status-tag { padding: 4px 12px; border-radius: 9999px; font-size: 0.875rem; font-weight: 500; }
+    .paid { background-color: #d1fae5; color: #065f46; }
+    .pending { background-color: #ffedd5; color: #9a3412; }
+    .processing { background-color: #dbeafe; color: #1e40af; }
+    .shipped { background-color: #e0f2fe; color: #0369a1; }
+    .delivered { background-color: #dcfce7; color: #166534; }
+    .cancelled { background-color: #fee2e2; color: #991b1b; }
+    .card { background-color: white; border-radius: 0.75rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+    .item-image { width: 80px; height: 80px; object-fit: contain; border-radius: 0.5rem; border: 1px solid #e5e7eb; }
+    .bg-image-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden; }
+    .bg-image-container img { width: 100%; height: 100%; object-fit: cover; opacity: 0.1; }
+    .order-total { background-color: #f8fafc; border-top: 1px solid #e2e8f0; }
+  </style>
+</head>
+<body class="p-4 md:p-8">
+
+  <!-- Inline Navbar -->
+  <nav class="bg-white shadow mb-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex">
+          <a href="{{ url_for('admin_dashboard') }}" class="flex items-center text-lg font-bold text-blue-600">
+            Divine Access Admin
+          </a>
+          <div class="hidden sm:-my-px sm:ml-10 sm:flex sm:space-x-8">
+            <a href="{{ url_for('admin_orders') }}" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-blue-600 border-b-2 border-blue-600">
+              Orders
+            </a>
+            <a href="{{ url_for('admin_products') }}" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-700 hover:text-blue-600">
+              Products
+            </a>
+            <a href="{{ url_for('admin_users') }}" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-700 hover:text-blue-600">
+              Users
+            </a>
+          </div>
+        </div>
+        <div class="flex items-center space-x-4">
+          <span class="text-sm text-gray-700">Admin: {{ current_user.firstname }}</span>
+          <a href="{{ url_for('logout') }}" class="text-sm text-gray-500 hover:text-red-600">Logout</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="bg-image-container">
+    <img src="https://placehold.co/1920x1080/e0e7ff/3730a3?text=Subtle+Background&font=lora" alt="Decorative background" />
+  </div>
+
+  <div class="max-w-7xl mx-auto space-y-8">
+    <h1 class="text-2xl font-bold text-gray-800">All Orders</h1>
+
+    {% if orders %}
+      {% for order in orders %}
+      <div class="card p-6 md:p-8 relative">
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+          <div>
+            <h2 class="text-xl md:text-2xl font-bold text-gray-800 mb-1">
+              Order #{{ order.order_id }}
+            </h2>
+            <p class="text-sm text-gray-500">
+              Placed on {{ order.created_at.strftime('%d %b, %Y at %I:%M %p') }}
+            </p>
+            <p class="text-sm text-gray-500">
+              Customer: {{ order.customer_name }} ({{ order.customer_email }})
+            </p>
+          </div>
+          <div class="flex items-center space-x-3 mt-3 sm:mt-0">
+            <a href="{{ url_for('download_invoice', order_id=order.order_id) }}" 
+               class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+              Download Invoice
+            </a>
+            <a href="{{ url_for('admin_edit_order', order_id=order.order_id) }}" 
+               class="px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition-colors">
+              Edit Order
+            </a>
+          </div>
+        </header>
+
+        <div class="flex flex-wrap items-center gap-3 mb-6 pb-4 border-b border-gray-200">
+          {% if order.payment_status == 'paid' %}
+          <span class="status-tag paid">Paid</span>
+          {% else %}
+          <span class="status-tag pending">Pending Payment</span>
+          {% endif %}
+          <span class="status-tag {{ order.status }}">{{ order.status | capitalize }}</span>
+          {% if order.status != 'delivered' %}
+          <span class="text-sm text-gray-600">
+            Estimated delivery: {{ (order.created_at + timedelta(days=3)).strftime('%d %b, %Y') }}
+          </span>
+          {% endif %}
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div class="lg:col-span-2">
+            {% for item in order.items %}
+            <div class="mb-4 p-4 border border-gray-200 rounded-lg">
+              <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+                <div class="md:col-span-5 flex items-start space-x-4">
+                  <img src="{{ item.image_url or 'https://placehold.co/200?text=No+Image' }}" alt="{{ item.product_name }}" class="item-image" />
+                  <div>
+                    <h3 class="font-semibold text-gray-800">{{ item.product_name }}</h3>
+                    <p class="text-sm text-gray-500">SKU: {{ item.product_id }}</p>
+                  </div>
+                </div>
+                <div class="md:col-span-2 text-left md:text-right text-sm text-gray-700">₹{{ "%.2f"|format(item.unit_price) }}</div>
+                <div class="md:col-span-2 text-left md:text-center text-sm text-gray-700">{{ item.quantity }}</div>
+                <div class="md:col-span-3 text-left md:text-right font-semibold text-gray-800">₹{{ "%.2f"|format(item.total_price) }}</div>
+              </div>
+            </div>
+            {% endfor %}
+
+            <div class="mt-6 p-4 border border-gray-200 rounded-lg order-total">
+              <div class="flex justify-between items-center">
+                <span class="font-medium text-gray-700">Order Total</span>
+                <span class="font-bold text-lg">₹{{ "%.2f"|format(order.order_total) }}</span>
+              </div>
+            </div>
+
+            {% if order.status in ['shipped', 'delivered'] %}
+            <hr class="my-6 border-gray-300" />
+            <div>
+              <h3 class="text-md font-semibold text-gray-700 mb-3">Shipping Information</h3>
+              <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <p class="text-sm font-medium text-gray-700">Courier</p>
+                    <p class="text-sm text-gray-600">Standard Shipping</p>
+                  </div>
+                  <div>
+                    <p class="text-sm font-medium text-gray-700">Tracking Number</p>
+                    <p class="text-sm text-gray-600">TN{{ order.order_id.replace("-", "")[:10].upper() }}</p>
+                  </div>
+                </div>
+                {% if order.status == 'delivered' %}
+                <div class="mt-3">
+                  <p class="text-sm font-medium text-gray-700">Delivered On</p>
+                  <p class="text-sm text-gray-600">
+                    {{ (order.created_at + timedelta(days=3)).strftime('%d %b, %Y at %I:%M %p') }}
+                  </p>
+                </div>
+                {% endif %}
+              </div>
+            </div>
+            {% endif %}
+          </div>
+
+          <div class="lg:col-span-1 space-y-6">
+            <div class="p-4 border border-gray-200 rounded-lg">
+              <h3 class="text-md font-semibold text-gray-700 mb-3">Customer</h3>
+              <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white">
+                  {{ order.customer_name[0]|upper }}
+                </div>
+                <div>
+                  <p class="text-sm font-medium text-gray-800">{{ order.customer_name }}</p>
+                  <p class="text-sm text-gray-600">{{ order.customer_email }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <p class="text-gray-600">No orders found.</p>
+    {% endif %}
+  </div>
+</body>
+</html>
