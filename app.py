@@ -209,21 +209,21 @@ logger = logging.getLogger(__name__)
 
 # =================== MySQL Connection ===================
 def get_mysql_connection():
-   try:
-       conn=mysql.connector.connect(
-           host='localhost',
-           user='root',
-           password='Omm@12',
-           database='web_portal',
-           autocommit=False,
-           buffered=False,
-           consume_results=True
-       )
-       logger.info("database connection successfull")
-       return conn
-   except Exception as e:
-       logger.error(f"Database connection failed: {e}")
-       return None
+    try:
+        conn = mysql.connector.connect(
+            host=os.getenv('MYSQL_HOST', 'localhost'),      # <- env var name here
+            user=os.getenv('MYSQL_USER', 'root'),           # <- env var name here
+            password=os.getenv('MYSQL_PASSWORD', 'Omm@12'),       # <- env var name here
+            database=os.getenv('MYSQL_DATABASE', 'web_portal'),       # <- env var name here
+            autocommit=False,
+            buffered=False,
+            consume_results=True
+        )
+        logger.info("Database connection successful")
+        return conn
+    except Exception as e:
+        logger.error(f"Database connection failed: {e}")
+        return None
    
 # ===============================context==============================================
 from contextlib import contextmanager
