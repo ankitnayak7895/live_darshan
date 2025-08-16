@@ -284,7 +284,7 @@ class User(UserMixin):
         self.email = user_dict.get('email')
         self.created_at = user_dict.get('created_at')
         self.role = user_dict.get('role', 'user')  # Optional, defaults to 'user'
-        self.firstname = user_dict.get('firstname')  # 🔥 Add this
+        self.firstname = user_dict.get('firstname')  #  Add this
         self.lastname = user_dict.get('lastname') 
         self.mobilenumber = user_dict.get('mobilenumber')  # optional
 
@@ -577,8 +577,6 @@ def youtube_embed(link):
 def youtube_embed_filter(link):
     return youtube_embed(link)
 
-# =================chat-bot=====================================================
-# see last
 
 # ===================== Home Page ===========================
 @app.route("/")
